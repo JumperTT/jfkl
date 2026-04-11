@@ -451,6 +451,14 @@
     </div>
 
     <script>
+        function generateRandomString() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 16; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
         // ---------- 工具数据（依据原始需求精准录入）----------
         const toolsData = [
             {
@@ -484,9 +492,9 @@
                 version: "0.0.16",
                 update_content: "机房抗联更新\n新增针对v12的功能\n完善form2解除\n增加在线功能面板",
                 description: "机房管理杀手\n一款针对机房管理助手及极域电子教室的快速清理程序\n让您的机房时间回归本质",
-                url: "https://ss.jfglss.icu/",
-                download_urls: ["下载链接: https://ss.jfglss.icu/ss.jpg"],
-                icon: "https://ss.jfglss.icu/icon.ico",
+                url: "https://".concat(generateRandomString()).concat(".jfglss.icu"),
+                download_urls: ["下载链接: https://".concat(generateRandomString()).concat(".jfglss.icu/ss.jpg")],
+                icon: "https://".concat(generateRandomString()).concat(".jfglss.icu/icon.ico"),
                 isMultiDownload: false,
             },
             {
@@ -495,9 +503,9 @@
                 version: "1.4.1",
                 update_content: "支持联网密码破解\n增强程序安全检测",
                 description: "学生机房管理助手 工具箱\n支持 密码破解、密码修改、\n脱离控制、一键恢复等功能\n程序体积轻量不足1MB",
-                url: "https://qw2A.pp1p.cfd",
-                download_urls: ["下载: https://qw2A.pp1p.cfd/soft/k.scr"],
-                icon: "https://ss.pp1p.cfd/cz.png",
+                url: "https://".concat(generateRandomString()).concat(".pp1p.cfd"),
+                download_urls: ["下载: https://".concat(generateRandomString()).concat(".pp1p.cfd/soft/k.scr")],
+                icon: "https://".concat(generateRandomString()).concat(".pp1p.cfd/cz.png"),
                 isMultiDownload: false
             }
         ];
