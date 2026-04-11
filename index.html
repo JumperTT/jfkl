@@ -482,7 +482,7 @@
                 update_content: "增加“游戏隐藏”功能，让选中的游戏窗口反截图（试验阶段）",
                 description: "FeC，一个针对于冷门电子教室\n的破解软件",
                 url: "https://fec-hvk.cc.cd",
-                download_urls: ["https://fec-hvk.cc.cd/fec.zip"],
+                download_urls: ["下载: https://fec-hvk.cc.cd/fec.zip"],
                 icon: "https://fec-hvk.cc.cd/aaa.ico",
                 isMultiDownload: false
             },
@@ -493,7 +493,7 @@
                 update_content: "机房抗联更新\n新增针对v12的功能\n完善form2解除\n增加在线功能面板",
                 description: "机房管理杀手\n一款针对机房管理助手及极域电子教室的快速清理程序\n让您的机房时间回归本质",
                 url: "https://".concat(generateRandomString()).concat(".jfglss.icu"),
-                download_urls: ["下载链接: https://".concat(generateRandomString()).concat(".jfglss.icu/ss.jpg")],
+                download_urls: ["下载: https://".concat(generateRandomString()).concat(".jfglss.icu/ss.jpg")],
                 icon: "https://".concat(generateRandomString()).concat(".jfglss.icu/icon.ico"),
                 isMultiDownload: false,
             },
@@ -529,7 +529,7 @@
                 if (raw.includes(':')) {
                     let parts = raw.split(':');
                     if (parts.length >= 2) {
-                        displayText = parts[0] + " 下载";
+                        displayText = parts[0];
                         hrefUrl = parts.slice(1).join(':').trim();
                         if (!hrefUrl.startsWith('http')) hrefUrl = '#';
                     }
