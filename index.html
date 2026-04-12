@@ -6,11 +6,10 @@
     <title>机房抗联 · 破壁者联盟</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- iconv-lite 用于 GBK 解码 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/iconv-lite/0.6.3/iconv-lite.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.25);
             --accent: #7c3aed;
             --bg-light: #f4f7fc;
             --card-light: rgba(255, 255, 255, 0.8);
@@ -19,7 +18,9 @@
             --card-dark: rgba(17, 24, 39, 0.85);
             --text-dark: #eef2ff;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
@@ -28,19 +29,23 @@
             line-height: 1.6;
         }
         body.dark { background: var(--bg-dark); color: var(--text-dark); }
+
         .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; }
+
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 3rem; padding-bottom: 1rem;
             border-bottom: 1px solid rgba(0,0,0,0.08);
         }
         body.dark .navbar { border-bottom-color: rgba(255,255,255,0.08); }
+
         .logo h1 {
             font-size: 1.9rem; font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--accent), #3b82f6);
             -webkit-background-clip: text; background-clip: text;
             color: transparent; letter-spacing: -0.5px;
         }
+
         .theme-toggle {
             background: rgba(0,0,0,0.06); border-radius: 60px; padding: 10px 20px;
             font-size: 0.9rem; font-weight: 600; cursor: pointer;
@@ -49,6 +54,7 @@
         }
         body.dark .theme-toggle { background: #1f2a44; }
         .theme-toggle:active { transform: scale(0.94); }
+
         .hero {
             background: var(--card-light); backdrop-filter: blur(12px);
             border-radius: 2rem; padding: 3rem; margin-bottom: 3rem;
@@ -57,14 +63,19 @@
             animation: fadeIn 0.8s ease-out;
         }
         body.dark .hero { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .badge {
             background: rgba(37, 99, 235, 0.1); color: var(--primary);
             display: inline-block; padding: 6px 18px; border-radius: 40px;
             font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem;
             border: 1px solid rgba(37, 99, 235, 0.2);
         }
+        body.dark .badge { background: rgba(37, 99, 235, 0.15); }
+
         .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+
         .hero-actions { display: flex; flex-wrap: wrap; gap: 15px; }
         .btn {
             padding: 12px 25px; border-radius: 12px; font-size: 0.95rem;
@@ -77,15 +88,18 @@
         .btn-primary:hover { background: #1d4ed8; }
         .btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
         .btn:active { transform: scale(0.96); }
+
         .section-title {
             font-size: 1.8rem; font-weight: 700; margin: 3rem 0 2rem;
             display: flex; align-items: center; gap: 15px;
         }
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 2rem;
         }
+
         .tool-card {
             position: relative; overflow: hidden;
             background: var(--card-light); backdrop-filter: blur(8px);
@@ -96,8 +110,10 @@
             user-select: none; cursor: default;
         }
         body.dark .tool-card { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+
         .tool-card:hover { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,0,0,0.12); }
         .tool-card:active { transform: translateY(-4px) scale(0.98); transition: transform 0.1s; }
+
         .ripple {
             position: absolute; border-radius: 50%;
             background: radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0) 70%);
@@ -105,6 +121,7 @@
             animation: ripple-animation 0.8s ease-out; z-index: 5;
         }
         @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+
         .tool-header { display: flex; gap: 16px; margin-bottom: 1.4rem; align-items: center; }
         .tool-icon {
             width: 60px; height: 60px; background: #e2e8f0; border-radius: 18px;
@@ -113,6 +130,7 @@
         }
         body.dark .tool-icon { background: #0f172a; }
         .tool-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
         .tool-name {
             font-size: 1.4rem; font-weight: 700;
             display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
@@ -122,14 +140,17 @@
             padding: 3px 10px; border-radius: 20px; font-weight: 600;
         }
         .tool-dev { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
+
         .tool-desc { font-size: 0.95rem; opacity: 0.9; margin-bottom: 1.2rem; flex-grow: 1; }
         .update-content {
             font-size: 0.8rem; background: rgba(124,58,237,0.08);
             padding: 8px 12px; border-radius: 12px; margin: 10px 0 14px;
             border-left: 3px solid var(--accent);
         }
+
         .tool-website { margin-bottom: 12px; font-size: 0.9rem; }
         .tool-website a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
         .download-group {
             display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;
             position: relative; z-index: 10;
@@ -144,7 +165,9 @@
         body.dark .btn-download { background: #1e293b; color: #bdd3ff; }
         .btn-download:hover { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-download:active { transform: scale(0.94); }
+
         .no-download { opacity: 0.6; font-size: 0.85rem; font-style: italic; }
+
         .join-card {
             background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(124,58,237,0.05));
             border-radius: 2rem; padding: 2.5rem; margin-top: 4rem;
@@ -156,6 +179,7 @@
         }
         .req-item { font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
         .req-item i { color: #10b981; }
+
         .loading-placeholder {
             grid-column: 1 / -1; text-align: center; padding: 3rem;
             font-size: 1.2rem; opacity: 0.7;
@@ -163,16 +187,12 @@
         .error-message {
             color: #dc2626; background: rgba(220,38,38,0.1);
             padding: 1rem; border-radius: 16px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 0.9rem;
         }
-        .debug-info {
-            background: rgba(0,0,0,0.05); border-radius: 12px;
-            padding: 10px; margin: 10px 0; font-size: 0.8rem;
+        .proxy-toggle {
+            display: flex; justify-content: flex-end; margin-bottom: 10px;
         }
-        body.dark .debug-info { background: rgba(255,255,255,0.05); }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
+
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
             .hero { padding: 2rem 1.5rem; }
@@ -218,9 +238,15 @@
             <i class="fas fa-terminal"></i>
             <span>⚡ 抗联利刃库 · 动态加载</span>
         </div>
+        <div class="proxy-toggle">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="useProxyCheckbox"> 
+                <i class="fas fa-shield-hal"></i> 使用 CORS 代理 (corsproxy.io)
+            </label>
+        </div>
         <div class="tools-grid" id="toolsContainer">
             <div class="loading-placeholder">
-                <i class="fas fa-spinner fa-pulse"></i> 正在读取本地 jfkl_urls.txt ...
+                <i class="fas fa-spinner fa-pulse"></i> 正在读取源列表 ...
             </div>
         </div>
         <div id="errorDetails" style="grid-column:1/-1;"></div>
@@ -309,64 +335,48 @@
             return m;
         }
 
-        // 纯直连 fetch，带 GBK 解码
-        const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        // 两个源列表
+        const URL_SOURCES = [
+            { name: '本地', url: './jfkl_urls.txt' },
+            { name: '远程', url: 'https://jfkl.pages.dev/jfkl_urls.txt' }
+        ];
 
-        async function fetchManifestDirect(url, timeoutMs = 10000) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-            try {
-                const resp = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'User-Agent': PC_UA,
-                        'Accept': 'application/json, text/plain, */*',
-                    },
-                    signal: controller.signal,
-                    cache: 'no-cache',
-                    mode: 'cors',
-                    credentials: 'omit'
-                });
-                clearTimeout(timeoutId);
-                if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-                
-                const buffer = await resp.arrayBuffer();
-                const uint8Array = new Uint8Array(buffer);
-                
-                let text;
-                try {
-                    // 优先尝试 UTF-8
-                    text = new TextDecoder('utf-8', { fatal: true }).decode(uint8Array);
-                } catch (utfError) {
-                    // 尝试 GBK
-                    try {
-                        if (typeof iconv !== 'undefined') {
-                            // 注意 iconv-lite 在浏览器中的用法
-                            text = iconv.decode(Buffer.from(uint8Array), 'gbk');
-                        } else {
-                            text = new TextDecoder('gbk').decode(uint8Array);
-                        }
-                    } catch (e) {
-                        text = new TextDecoder('iso-8859-1').decode(uint8Array);
-                    }
-                }
-                
-                try {
-                    return JSON.parse(text);
-                } catch (jsonError) {
-                    throw new Error('JSON 解析失败，内容前100字符: ' + text.substring(0, 100));
-                }
-            } catch (e) {
-                clearTimeout(timeoutId);
-                if (e.name === 'AbortError') throw new Error('请求超时');
-                if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-                    throw new Error('CORS 或网络错误：目标服务器可能不允许跨域访问');
-                }
-                throw e;
+        const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        const useProxyCheckbox = document.getElementById('useProxyCheckbox');
+
+        // 带编码解码的 fetch (无重试，保持简洁)
+        async function fetchManifest(url) {
+            let finalUrl = url;
+            if (useProxyCheckbox.checked) {
+                finalUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
             }
+            const resp = await fetch(finalUrl, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': PC_UA,
+                    'Accept': 'application/json, text/plain, */*',
+                },
+                cache: 'no-cache',
+                mode: 'cors',
+                credentials: 'omit'
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const buffer = await resp.arrayBuffer();
+            const uint8Array = new Uint8Array(buffer);
+            let text;
+            try {
+                text = new TextDecoder('utf-8', { fatal: true }).decode(uint8Array);
+            } catch {
+                try {
+                    text = new TextDecoder('gbk').decode(uint8Array);
+                } catch {
+                    text = new TextDecoder('iso-8859-1').decode(uint8Array);
+                }
+            }
+            return JSON.parse(text);
         }
 
-        // 创建卡片
+        // 创建卡片 (与原版一致)
         function createToolCard(manifest, baseUrl) {
             const m = processManifest(manifest);
             const downloadItems = parseDownloadField(manifest.download_url);
@@ -454,11 +464,8 @@
             retryBtn.style.display = 'none';
         }
 
-        function showErrorWithDetails(summary, details) {
-            container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${summary}</div>`;
-            if (details) {
-                errorDetailsDiv.innerHTML = `<div class="debug-info"><strong>调试信息：</strong><br>${details}</div>`;
-            }
+        function showError(msg) {
+            container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${msg}</div>`;
             retryBtn.style.display = 'inline-block';
         }
 
@@ -471,56 +478,63 @@
             const hint = document.createElement('div');
             hint.className = 'loading-placeholder';
             hint.style.gridColumn = '1/-1';
-            hint.style.padding = '0.5rem';
             hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。';
             container.appendChild(hint);
-            errorDetailsDiv.innerHTML = '';
             retryBtn.style.display = 'inline-block';
         }
 
         async function loadTools() {
-            showLoading('正在读取本地 jfkl_urls.txt ...');
+            showLoading('正在读取源列表 (本地 + 远程) ...');
             try {
-                const listResp = await fetch('./jfkl_urls.txt', { cache: 'no-cache' });
-                if (!listResp.ok) throw new Error(`HTTP ${listResp.status} (列表文件不存在)`);
-                const text = await listResp.text();
-                const lines = text.split(/\r?\n/);
-                const baseSet = new Set();
-                lines.forEach(line => {
-                    const p = processUrlLine(line);
-                    if (p) baseSet.add(p);
+                // 并发获取两个源列表
+                const sourcePromises = URL_SOURCES.map(async src => {
+                    try {
+                        const resp = await fetch(src.url, { cache: 'no-cache' });
+                        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                        const text = await resp.text();
+                        const lines = text.split(/\r?\n/);
+                        const urls = [];
+                        lines.forEach(line => {
+                            const p = processUrlLine(line);
+                            if (p) urls.push(p);
+                        });
+                        return { success: true, urls, source: src.name };
+                    } catch (e) {
+                        console.warn(`获取列表失败 [${src.name}]:`, e);
+                        return { success: false, urls: [], source: src.name, error: e.message };
+                    }
                 });
-                const baseUrls = Array.from(baseSet);
+                const sourceResults = await Promise.all(sourcePromises);
+                const allBaseUrls = new Set();
+                const successSources = [];
+                sourceResults.forEach(r => {
+                    if (r.success) {
+                        r.urls.forEach(u => allBaseUrls.add(u));
+                        successSources.push(r.source);
+                    }
+                });
+                const baseUrls = Array.from(allBaseUrls);
                 if (baseUrls.length === 0) {
-                    showErrorWithDetails('jfkl_urls.txt 中没有有效地址。', '');
+                    showError('没有获取到任何工具域名。');
                     loadFallback();
                     return;
                 }
 
-                showLoading(`正在从 ${baseUrls.length} 个源直连获取数据...`);
-                
-                const fetchOne = async (base) => {
-                    // 确保 URL 拼接正确
+                const proxyStatus = useProxyCheckbox.checked ? ' (使用代理)' : ' (直连)';
+                showLoading(`正在从 ${baseUrls.length} 个源获取数据${proxyStatus}...`);
+
+                const manifestPromises = baseUrls.map(async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const json = await fetchManifestDirect(manifestUrl, 10000);
-                        return { base, manifest: json, ok: true, error: null };
+                        const json = await fetchManifest(manifestUrl);
+                        return { base, manifest: json, ok: true };
                     } catch (e) {
+                        console.warn(`加载失败 ${manifestUrl}:`, e);
                         return { base, ok: false, error: e.message };
-                    }
-                };
-
-                const results = await Promise.all(baseUrls.map(fetchOne));
-                
-                let errorLog = '';
-                results.forEach(r => {
-                    if (!r.ok) {
-                        errorLog += `❌ ${r.base}: ${r.error}\n`;
-                    } else {
-                        errorLog += `✅ ${r.base}: 成功\n`;
                     }
                 });
 
+                const results = await Promise.all(manifestPromises);
                 container.innerHTML = '';
                 let rendered = 0;
                 results.forEach(r => {
@@ -533,29 +547,28 @@
                 });
 
                 if (rendered === 0) {
-                    showErrorWithDetails('所有源直连失败。', errorLog);
+                    showError('没有成功加载任何工具。');
                     loadFallback();
                 } else {
-                    errorDetailsDiv.innerHTML = '';
                     retryBtn.style.display = 'none';
                     const failed = results.length - rendered;
                     if (failed > 0) {
                         const hint = document.createElement('div');
                         hint.className = 'loading-placeholder';
                         hint.style.gridColumn = '1/-1';
-                        hint.style.padding = '0.5rem';
-                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败。<br><small>${errorLog.replace(/\n/g,'<br>')}</small>`;
+                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，已忽略。`;
                         container.appendChild(hint);
                     }
                 }
             } catch (e) {
                 console.error(e);
-                showErrorWithDetails(`初始化失败: ${e.message}`, '');
+                showError(`初始化失败: ${e.message}`);
                 loadFallback();
             }
         }
 
         retryBtn.addEventListener('click', loadTools);
+        useProxyCheckbox.addEventListener('change', loadTools);
         loadTools();
 
         const toolboxBtn = document.getElementById('toolboxDownloadBtn');
