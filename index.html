@@ -1,13 +1,1110 @@
-{
-  "name": "工具名称",
-  "developer": "开发者名称",
-  "version": "1.0.0",
-  "update_content": "本次更新的内容",
-  "description": "工具描述，支持使用\\n换行",
-  "url": "https://*.example.com",
-  "icon_url": "https://*.example.com/icon.png",
-  "download_url": [
-    "Windows版本: https://*.example.com/windows.zip",
-    "macOS版本: https://*.example.com/macos.zip"
-  ]
-}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLRA 工具分发平台</title>
+    <!-- 使用CDN资源 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* 浅色主题变量 */
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary-color: #6b7280;
+            --background-color: #f9fafb;
+            --surface-color: #ffffff;
+            --text-color: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        /* 深色主题变量 */
+        [data-theme="dark"] {
+            --primary-color: #6366f1;
+            --primary-hover: #818cf8;
+            --secondary-color: #9ca3af;
+            --background-color: #111827;
+            --surface-color: #1f2937;
+            --text-color: #f9fafb;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 基础样式 */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+        
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+        
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        
+        /* 布局容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+        
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--border-color);
+        }
+        
+        .theme-toggle i {
+            font-size: 18px;
+        }
+        
+        /* 主内容区域 */
+        main {
+            padding: 40px 0;
+        }
+        
+        .page-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .page-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 加载指示器 */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state p {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 24px;
+        }
+        
+        /* 工具卡片网格 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        /* 工具卡片 */
+        .tool-card {
+            background-color: var(--surface-color);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-hover-shadow);
+        }
+        
+        .tool-card-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tool-icon-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background-color: var(--primary-color);
+            color: white;
+            overflow: hidden;
+        }
+        
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .tool-icon-placeholder {
+            background-color: var(--secondary-color);
+        }
+        
+        .tool-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .tool-title h3 {
+            font-size: 20px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .version-badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: 12px;
+        }
+        
+        .tool-developer {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tool-card-body {
+            padding: 20px 24px;
+            flex: 1;
+        }
+        
+        .tool-description {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+        
+        .update-content {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--info-color);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .update-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--info-color);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .update-content p {
+            font-size: 14px;
+            color: var(--text-color);
+            white-space: pre-line;
+        }
+        
+        .tool-card-footer {
+            padding: 0 24px 24px;
+        }
+        
+        .tool-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+        
+        .btn-download {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            justify-content: flex-start;
+        }
+        
+        .btn-download:hover {
+            background-color: var(--border-color);
+        }
+        
+        .btn i {
+            font-size: 16px;
+        }
+        
+        /* 水波纹效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* 底部样式 */
+        footer {
+            padding: 32px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .page-header h2 {
+                font-size: 28px;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .tool-card-header,
+            .tool-card-body,
+            .tool-card-footer {
+                padding: 20px 16px;
+            }
+        }
+        
+        /* 调试信息样式 */
+        .debug-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            max-width: 300px;
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+            display: none;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 调试信息面板 -->
+    <div class="debug-toggle" id="debugToggle">
+        <i class="fas fa-bug"></i>
+    </div>
+    
+    <div class="debug-info" id="debugInfo">
+        <div class="debug-header">
+            <strong>调试信息</strong>
+            <button id="clearDebug" style="margin-left: 10px; background: none; border: none; color: var(--primary-color); cursor: pointer;">
+                清除
+            </button>
+        </div>
+        <div class="debug-content" id="debugContent"></div>
+    </div>
+    
+    <!-- 页面结构 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>CLRA 工具库</h1>
+                        <p>一站式工具分发平台</p>
+                    </div>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>深色模式</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h2>可用工具</h2>
+                <p>从配置的域名列表自动加载的工具集合，点击卡片查看详情和下载</p>
+            </div>
+            
+            <!-- 加载状态 -->
+            <div class="loading-container" id="loadingContainer">
+                <div class="spinner"></div>
+                <p class="loading-text">正在加载工具列表...</p>
+            </div>
+            
+            <!-- 工具卡片容器 -->
+            <div class="tools-grid" id="toolsContainer">
+                <!-- 工具卡片将在这里动态生成 -->
+            </div>
+            
+            <!-- 空状态 -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3>暂无工具</h3>
+                <p>未能从配置文件中加载到任何可用的工具，请检查配置文件或网络连接。</p>
+                <button class="btn btn-primary" id="retryButton">
+                    <i class="fas fa-redo"></i>
+                    重新加载
+                </button>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>CLRA 工具分发平台 &copy; 2026 | 本页面从配置文件自动加载工具信息</p>
+        </div>
+    </footer>
+
+    <script>
+        // 单文件静态工具分发平台
+        // 版本: 1.0.0
+        // 最后更新: 2026-04-19
+        // 作者: CLRA 开发团队
+        
+        (function() {
+            'use strict';
+            
+            // 配置常量
+            const CONFIG_FILE = 'clra_urls.txt';
+            const MANIFEST_FILE = 'clra_manifest.json';
+            const RANDOM_STRING_LENGTH = 16;
+            const VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_';
+            
+            // 全局状态
+            const state = {
+                tools: [],
+                isLoading: true,
+                theme: localStorage.getItem('clra-theme') || 'light',
+                debugMode: false,
+                debugLogs: [],
+                wildcardCache: new Map() // 缓存泛域名解析结果
+            };
+            
+            // DOM 元素引用
+            const dom = {
+                themeToggle: document.getElementById('themeToggle'),
+                toolsContainer: document.getElementById('toolsContainer'),
+                loadingContainer: document.getElementById('loadingContainer'),
+                emptyState: document.getElementById('emptyState'),
+                retryButton: document.getElementById('retryButton'),
+                debugToggle: document.getElementById('debugToggle'),
+                debugInfo: document.getElementById('debugInfo'),
+                debugContent: document.getElementById('debugContent'),
+                clearDebug: document.getElementById('clearDebug')
+            };
+            
+            // 调试工具函数
+            const debug = {
+                log: function(message, type = 'info') {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const logEntry = {
+                        timestamp,
+                        message,
+                        type
+                    };
+                    
+                    state.debugLogs.push(logEntry);
+                    
+                    // 控制台输出
+                    const consoleMethod = type === 'error' ? console.error : 
+                                        type === 'warn' ? console.warn : 
+                                        console.log;
+                    consoleMethod(`[CLRA] ${timestamp}: ${message}`);
+                    
+                    // 更新调试面板
+                    this.updatePanel();
+                },
+                
+                updatePanel: function() {
+                    if (!state.debugMode) return;
+                    
+                    let html = '';
+                    for (const log of state.debugLogs.slice(-20)) { // 只显示最近20条
+                        html += `<div style="margin-bottom: 5px; padding: 4px; border-left: 3px solid ${this.getColorForType(log.type)}; background: rgba(0,0,0,0.05);">
+                                    <span style="color: #666; font-size: 10px;">${log.timestamp}</span>
+                                    <span style="margin-left: 8px;">${this.escapeHtml(log.message)}</span>
+                                </div>`;
+                    }
+                    
+                    dom.debugContent.innerHTML = html;
+                },
+                
+                getColorForType: function(type) {
+                    switch(type) {
+                        case 'error': return '#ef4444';
+                        case 'warn': return '#f59e0b';
+                        case 'success': return '#10b981';
+                        default: return '#3b82f6';
+                    }
+                },
+                
+                escapeHtml: function(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+                
+                clear: function() {
+                    state.debugLogs = [];
+                    dom.debugContent.innerHTML = '';
+                }
+            };
+            
+            // 工具函数
+            const utils = {
+                // 生成随机字符串
+                generateRandomString: function(length) {
+                    let result = '';
+                    const chars = VALID_CHARS;
+                    
+                    for (let i = 0; i < length; i++) {
+                        result += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    
+                    // 确保不包含英文半角句号
+                    return result.replace(/\./g, '_');
+                },
+                
+                // 处理泛域名
+                processWildcard: function(domain) {
+                    // 如果域名不包含星号，直接返回
+                    if (!domain.includes('*')) {
+                        return domain;
+                    }
+                    
+                    // 检查缓存
+                    if (state.wildcardCache.has(domain)) {
+                        const cached = state.wildcardCache.get(domain);
+                        debug.log(`从缓存获取泛域名解析: ${domain} -> ${cached}`);
+                        return cached;
+                    }
+                    
+                    // 生成随机字符串并替换星号
+                    const randomString = this.generateRandomString(RANDOM_STRING_LENGTH);
+                    const resolvedDomain = domain.replace(/\*/g, randomString);
+                    
+                    // 缓存结果
+                    state.wildcardCache.set(domain, resolvedDomain);
+                    
+                    debug.log(`泛域名解析: ${domain} -> ${resolvedDomain}`);
+                    
+                    return resolvedDomain;
+                },
+                
+                // 解析下载链接格式
+                parseDownloadUrl: function(downloadStr) {
+                    const colonIndex = downloadStr.indexOf(':');
+                    if (colonIndex === -1) {
+                        return { text: '下载', url: downloadStr };
+                    }
+                    
+                    const text = downloadStr.substring(0, colonIndex).trim();
+                    const url = downloadStr.substring(colonIndex + 1).trim();
+                    
+                    return { text, url };
+                },
+                
+                // 处理URL中的星号
+                processUrl: function(url) {
+                    if (!url || typeof url !== 'string') return url;
+                    
+                    // 处理图标URL，确保使用HTTPS
+                    if (url.startsWith('//')) {
+                        url = 'https:' + url;
+                    } else if (url.startsWith('http://')) {
+                        url = url.replace('http://', 'https://');
+                    } else if (!url.startsWith('https://') && !url.startsWith('data:')) {
+                        url = 'https://' + url;
+                    }
+                    
+                    // 处理星号
+                    if (url.includes('*')) {
+                        const urlObj = new URL(url);
+                        const hostname = urlObj.hostname;
+                        
+                        if (hostname.includes('*')) {
+                            const processedHostname = this.processWildcard(hostname);
+                            urlObj.hostname = processedHostname;
+                            url = urlObj.toString();
+                        }
+                    }
+                    
+                    return url;
+                },
+                
+                // 转义HTML，防止XSS攻击
+                escapeHtml: function(unsafe) {
+                    if (typeof unsafe !== 'string') return unsafe;
+                    
+                    return unsafe
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                },
+                
+                // 添加水波纹效果
+                createRipple: function(event) {
+                    const button = event.currentTarget;
+                    const circle = document.createElement("span");
+                    const diameter = Math.max(button.clientWidth, button.clientHeight);
+                    const radius = diameter / 2;
+                    
+                    const rect = button.getBoundingClientRect();
+                    
+                    circle.style.width = circle.style.height = `${diameter}px`;
+                    circle.style.left = `${event.clientX - rect.left - radius}px`;
+                    circle.style.top = `${event.clientY - rect.top - radius}px`;
+                    circle.classList.add("ripple");
+                    
+                    const ripple = button.getElementsByClassName("ripple")[0];
+                    if (ripple) {
+                        ripple.remove();
+                    }
+                    
+                    button.appendChild(circle);
+                }
+            };
+            
+            // 核心功能模块
+            const core = {
+                // 从配置文件加载域名列表
+                loadDomainList: async function() {
+                    try {
+                        debug.log(`正在加载配置文件: ${CONFIG_FILE}`);
+                        const response = await fetch(CONFIG_FILE);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const text = await response.text();
+                        const domains = text
+                            .split('\n')
+                            .map(domain => domain.trim())
+                            .filter(domain => domain && !domain.startsWith('#') && domain.length > 0);
+                        
+                        debug.log(`成功加载 ${domains.length} 个域名`);
+                        return domains;
+                    } catch (error) {
+                        debug.log(`加载配置文件失败: ${error.message}`, 'error');
+                        return [];
+                    }
+                },
+                
+                // 加载单个工具的清单文件
+                loadToolManifest: async function(domain) {
+                    try {
+                        // 处理泛域名
+                        const processedDomain = utils.processWildcard(domain);
+                        const manifestUrl = `https://${processedDomain}/${MANIFEST_FILE}`;
+                        
+                        debug.log(`正在加载清单文件: ${manifestUrl}`);
+                        const response = await fetch(manifestUrl, {
+                            headers: { 'Accept': 'application/json' },
+                            // 添加超时处理
+                            signal: AbortSignal.timeout(10000)
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const manifest = await response.json();
+                        
+                        // 验证必需字段
+                        if (!manifest.name || !manifest.developer || !manifest.version || !manifest.description) {
+                            throw new Error('清单文件缺少必需字段');
+                        }
+                        
+                        // 处理清单数据
+                        const toolData = {
+                            name: utils.escapeHtml(manifest.name),
+                            developer: utils.escapeHtml(manifest.developer),
+                            version: utils.escapeHtml(manifest.version),
+                            description: utils.escapeHtml(manifest.description).replace(/\\n/g, '\n'),
+                            update_content: manifest.update_content ? utils.escapeHtml(manifest.update_content).replace(/\\n/g, '\n') : null,
+                            url: manifest.url ? utils.processUrl(manifest.url) : null,
+                            icon_url: manifest.icon_url ? utils.processUrl(manifest.icon_url) : null,
+                            download_urls: []
+                        };
+                        
+                        // 处理下载链接
+                        if (manifest.download_url && Array.isArray(manifest.download_url)) {
+                            for (const downloadStr of manifest.download_url) {
+                                try {
+                                    const { text, url } = utils.parseDownloadUrl(downloadStr);
+                                    const processedUrl = utils.processUrl(url);
+                                    
+                                    toolData.download_urls.push({
+                                        text: utils.escapeHtml(text),
+                                        url: processedUrl
+                                    });
+                                } catch (error) {
+                                    debug.log(`解析下载链接失败: ${downloadStr}`, 'warn');
+                                }
+                            }
+                        }
+                        
+                        debug.log(`成功加载工具: ${toolData.name} (v${toolData.version})`, 'success');
+                        return toolData;
+                        
+                    } catch (error) {
+                        debug.log(`加载工具失败 (${domain}): ${error.message}`, 'error');
+                        return null;
+                    }
+                },
+                
+                // 并行加载所有工具
+                loadAllTools: async function(domains) {
+                    state.isLoading = true;
+                    state.tools = [];
+                    
+                    // 显示加载状态
+                    dom.loadingContainer.style.display = 'flex';
+                    dom.toolsContainer.innerHTML = '';
+                    dom.emptyState.style.display = 'none';
+                    
+                    // 创建所有加载任务
+                    const loadPromises = domains.map(domain => core.loadToolManifest(domain));
+                    
+                    // 等待所有任务完成
+                    const results = await Promise.allSettled(loadPromises);
+                    
+                    // 过滤出成功的工具
+                    const successfulTools = results
+                        .filter(result => result.status === 'fulfilled' && result.value !== null)
+                        .map(result => result.value);
+                    
+                    // 按名称排序
+                    successfulTools.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    state.tools = successfulTools;
+                    state.isLoading = false;
+                    
+                    // 隐藏加载状态
+                    dom.loadingContainer.style.display = 'none';
+                    
+                    // 渲染工具或显示空状态
+                    if (successfulTools.length > 0) {
+                        ui.renderTools(successfulTools);
+                        debug.log(`成功加载 ${successfulTools.length} 个工具`, 'success');
+                    } else {
+                        dom.emptyState.style.display = 'block';
+                        debug.log('没有成功加载任何工具', 'warn');
+                    }
+                }
+            };
+            
+            // UI 模块
+            const ui = {
+                // 初始化主题
+                initTheme: function() {
+                    document.documentElement.setAttribute('data-theme', state.theme);
+                    
+                    // 更新按钮文本
+                    const icon = dom.themeToggle.querySelector('i');
+                    const text = dom.themeToggle.querySelector('span');
+                    
+                    if (state.theme === 'dark') {
+                        icon.className = 'fas fa-sun';
+                        text.textContent = '浅色模式';
+                    } else {
+                        icon.className = 'fas fa-moon';
+                        text.textContent = '深色模式';
+                    }
+                },
+                
+                // 切换主题
+                toggleTheme: function() {
+                    state.theme = state.theme === 'light' ? 'dark' : 'light';
+                    localStorage.setItem('clra-theme', state.theme);
+                    this.initTheme();
+                },
+                
+                // 渲染工具卡片
+                renderTools: function(tools) {
+                    dom.toolsContainer.innerHTML = '';
+                    
+                    for (const tool of tools) {
+                        const toolCard = this.createToolCard(tool);
+                        dom.toolsContainer.appendChild(toolCard);
+                    }
+                },
+                
+                // 创建单个工具卡片
+                createToolCard: function(tool) {
+                    const card = document.createElement('div');
+                    card.className = 'tool-card';
+                    
+                    // 处理图标
+                    let iconHtml = '';
+                    if (tool.icon_url) {
+                        iconHtml = `
+                            <img 
+                                src="${tool.icon_url}" 
+                                alt="${tool.name} 图标" 
+                                loading="lazy"
+                                onerror="this.onerror=null; this.src=''; this.className='tool-icon-placeholder'; this.parentElement.innerHTML='<i class=\\'fas fa-cogs\\'></i>'; console.warn('图标加载失败:', '${tool.icon_url}')"
+                            >
+                        `;
+                    } else {
+                        iconHtml = '<i class="fas fa-cogs"></i>';
+                    }
+                    
+                    // 处理更新内容
+                    let updateContentHtml = '';
+                    if (tool.update_content) {
+                        updateContentHtml = `
+                            <div class="update-content">
+                                <h4><i class="fas fa-sync-alt"></i> 更新内容</h4>
+                                <p>${tool.update_content}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // 处理下载按钮
+                    let downloadButtonsHtml = '';
+                    if (tool.download_urls.length > 0) {
+                        for (const download of tool.download_urls) {
+                            downloadButtonsHtml += `
+                                <a href="${download.url}" 
+                                   class="btn btn-download" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   onclick="utils.createRipple(event)">
+                                    <i class="fas fa-download"></i>
+                                    ${download.text}
+                                </a>
+                            `;
+                        }
+                    }
+                    
+                    // 处理项目主页按钮
+                    let projectButtonHtml = '';
+                    if (tool.url) {
+                        projectButtonHtml = `
+                            <a href="${tool.url}" 
+                               class="btn btn-secondary" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               onclick="utils.createRipple(event)">
+                                <i class="fas fa-external-link-alt"></i>
+                                项目主页
+                            </a>
+                        `;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="tool-card-header">
+                            <div class="tool-icon-container">
+                                <div class="tool-icon ${!tool.icon_url ? 'tool-icon-placeholder' : ''}">
+                                    ${iconHtml}
+                                </div>
+                            </div>
+                            <div class="tool-title">
+                                <h3>${tool.name}</h3>
+                                <span class="version-badge">v${tool.version}</span>
+                            </div>
+                            <div class="tool-developer">
+                                <i class="fas fa-user"></i>
+                                ${tool.developer}
+                            </div>
+                        </div>
+                        <div class="tool-card-body">
+                            <p class="tool-description">${tool.description}</p>
+                            ${updateContentHtml}
+                        </div>
+                        <div class="tool-card-footer">
+                            <div class="tool-actions">
+                                ${projectButtonHtml}
+                                ${downloadButtonsHtml}
+                            </div>
+                        </div>
+                    `;
+                    
+                    return card;
+                },
+                
+                // 初始化事件监听
+                initEventListeners: function() {
+                    // 主题切换
+                    dom.themeToggle.addEventListener('click', () => this.toggleTheme());
+                    
+                    // 重试按钮
+                    dom.retryButton.addEventListener('click', async () => {
+                        await app.init();
+                    });
+                    
+                    // 调试面板切换
+                    dom.debugToggle.addEventListener('click', () => {
+                        state.debugMode = !state.debugMode;
+                        dom.debugInfo.style.display = state.debugMode ? 'block' : 'none';
+                        
+                        if (state.debugMode) {
+                            debug.updatePanel();
+                        }
+                    });
+                    
+                    // 清除调试日志
+                    dom.clearDebug.addEventListener('click', () => {
+                        debug.clear();
+                    });
+                    
+                    // 为所有按钮添加水波纹效果
+                    document.addEventListener('click', function(event) {
+                        if (event.target.closest('.btn')) {
+                            utils.createRipple(event);
+                        }
+                    });
+                }
+            };
+            
+            // 主应用模块
+            const app = {
+                // 初始化应用
+                init: async function() {
+                    debug.log('应用初始化开始');
+                    
+                    // 初始化UI
+                    ui.initTheme();
+                    ui.initEventListeners();
+                    
+                    // 加载域名列表
+                    const domains = await core.loadDomainList();
+                    
+                    if (domains.length === 0) {
+                        debug.log('未找到有效域名，显示空状态', 'warn');
+                        state.isLoading = false;
+                        dom.loadingContainer.style.display = 'none';
+                        dom.emptyState.style.display = 'block';
+                        return;
+                    }
+                    
+                    // 加载所有工具
+                    await core.loadAllTools(domains);
+                    
+                    debug.log('应用初始化完成', 'success');
+                }
+            };
+            
+            // 初始化应用
+            document.addEventListener('DOMContentLoaded', async () => {
+                await app.init();
+            });
+            
+            // 暴露工具函数到全局作用域，供内联事件处理器使用
+            window.utils = utils;
+        })();
+    </script>
+</body>
+</html>
