@@ -121,6 +121,41 @@
             box-shadow: var(--shadow-hover);
         }
 
+        /* 调试信息样式 */
+        .debug-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            max-width: 300px;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: var(--shadow);
+            margin-right: 60px;
+        }
+
         .loading {
             text-align: center;
             padding: 60px 20px;
@@ -400,6 +435,21 @@
         <i class="fas fa-moon"></i>
     </div>
 
+    <!-- 调试信息面板 -->
+    <div class="debug-toggle" id="debugToggle">
+        <i class="fas fa-bug"></i>
+    </div>
+
+    <div class="debug-info" id="debugInfo">
+        <div class="debug-header">
+            <strong>调试信息</strong>
+            <button id="clearDebug" style="margin-left: 10px; background: none; border: none; color: var(--accent-color); cursor: pointer;">
+                清除
+            </button>
+        </div>
+        <div class="debug-content" id="debugContent"></div>
+    </div>
+
     <div class="container">
         <header>
             <h1><i class="fas fa-tools"></i> CLRA 工具分发平台</h1>
@@ -440,7 +490,72 @@
             const state = {
                 wildcardCache: new Map(), // 泛域名缓存
                 tools: [], // 工具列表
-                theme: localStorage.getItem('theme') || 'light'
+                theme: localStorage.getItem('theme') || 'light',
+                debugMode: false,
+                debugLogs: []
+            };
+
+            // 调试工具函数
+            const debug = {
+                log: function(message, type = 'info') {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const logEntry = {
+                        timestamp,
+                        message,
+                        type
+                    };
+
+                    state.debugLogs.push(logEntry);
+
+                    // 控制台输出
+                    const consoleMethod = type === 'error' ? console.error :
+                                        type === 'warn' ? console.warn :
+                                        console.log;
+                    consoleMethod(`[CLRA] ${timestamp}: ${message}`);
+
+                    // 更新调试面板
+                    this.updatePanel();
+                },
+
+                updatePanel: function() {
+                    if (!state.debugMode) return;
+
+                    let html = '';
+                    for (const log of state.debugLogs.slice(-20)) { // 只显示最近20条
+                        html += `<div style="margin-bottom: 5px; padding: 4px; border-left: 3px solid ${this.getColorForType(log.type)}; background: rgba(0,0,0,0.05);">
+                                    <span style="color: #666; font-size: 10px;">${log.timestamp}</span>
+                                    <span style="margin-left: 8px;">${this.escapeHtml(log.message)}</span>
+                                </div>`;
+                    }
+
+                    const debugContent = document.getElementById('debugContent');
+                    if (debugContent) {
+                        debugContent.innerHTML = html;
+                    }
+                },
+
+                getColorForType: function(type) {
+                    switch(type) {
+                        case 'error': return '#ef4444';
+                        case 'warn': return '#f59e0b';
+                        case 'success': return '#10b981';
+                        default: return '#3b82f6';
+                    }
+                },
+
+                escapeHtml: function(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                clear: function() {
+                    state.debugLogs = [];
+                    const debugContent = document.getElementById('debugContent');
+                    if (debugContent) {
+                        debugContent.innerHTML = '';
+                    }
+                }
             };
 
             /**
@@ -469,7 +584,9 @@
 
                 // 检查缓存
                 if (state.wildcardCache.has(domain)) {
-                    return state.wildcardCache.get(domain);
+                    const cached = state.wildcardCache.get(domain);
+                    debug.log(`从缓存获取泛域名解析: ${domain} -> ${cached}`);
+                    return cached;
                 }
 
                 // 生成新的随机域名
@@ -479,7 +596,7 @@
                 // 缓存结果
                 state.wildcardCache.set(domain, processedDomain);
 
-                console.log(`泛域名解析: ${domain} -> ${processedDomain}`);
+                debug.log(`泛域名解析: ${domain} -> ${processedDomain}`);
                 return processedDomain;
             }
 
@@ -623,7 +740,10 @@
              */
             async function fetchManifest(domain) {
                 try {
-                    const manifestUrl = `https://${domain}/clra_manifest.json`;
+                    const processedDomain = processWildcardDomain(domain);
+                    const manifestUrl = `https://${processedDomain}/clra_manifest.json`;
+                    debug.log(`正在加载清单文件: ${manifestUrl}`);
+
                     const response = await fetch(manifestUrl, {
                         mode: 'cors',
                         headers: {
@@ -636,10 +756,10 @@
                     }
 
                     const manifest = await response.json();
-                    console.log(`成功加载清单: ${domain}`);
+                    debug.log(`成功加载清单: ${domain}`, 'success');
                     return manifest;
                 } catch (error) {
-                    console.error(`加载清单失败 ${domain}:`, error.message);
+                    debug.log(`加载清单失败 ${domain}: ${error.message}`, 'error');
                     return null;
                 }
             }
@@ -650,6 +770,7 @@
              */
             async function loadConfig() {
                 try {
+                    debug.log('正在加载配置文件: clra_urls.txt');
                     const response = await fetch('./clra_urls.txt');
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}`);
@@ -661,10 +782,10 @@
                         .map(line => line.trim())
                         .filter(line => line && !line.startsWith('#'));
 
-                    console.log(`读取到 ${domains.length} 个域名配置`);
+                    debug.log(`成功加载 ${domains.length} 个域名配置`, 'success');
                     return domains;
                 } catch (error) {
-                    console.error('加载配置文件失败:', error.message);
+                    debug.log(`加载配置文件失败: ${error.message}`, 'error');
                     return [];
                 }
             }
@@ -677,6 +798,8 @@
                 loading.classList.add('active');
 
                 try {
+                    debug.log('应用初始化开始');
+
                     // 加载配置文件
                     const domains = await loadConfig();
                     if (domains.length === 0) {
@@ -691,11 +814,11 @@
                     // 过滤成功的结果
                     state.tools = manifests.filter(manifest => manifest !== null);
 
-                    console.log(`成功加载 ${state.tools.length} 个工具`);
+                    debug.log(`成功加载 ${state.tools.length} 个工具`, 'success');
                     renderTools();
 
                 } catch (error) {
-                    console.error('初始化失败:', error.message);
+                    debug.log(`初始化失败: ${error.message}`, 'error');
                     const loading = document.getElementById('loading');
                     const errorMessage = document.getElementById('errorMessage');
                     loading.classList.remove('active');
@@ -727,8 +850,35 @@
                 }
             }
 
+            // 调试面板切换
+            function toggleDebugPanel() {
+                state.debugMode = !state.debugMode;
+                const debugInfo = document.getElementById('debugInfo');
+                if (debugInfo) {
+                    debugInfo.style.display = state.debugMode ? 'block' : 'none';
+                    if (state.debugMode) {
+                        debug.updatePanel();
+                    }
+                }
+            }
+
+            // 清除调试日志
+            function clearDebug() {
+                debug.clear();
+            }
+
             // 事件监听器
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            const debugToggle = document.getElementById('debugToggle');
+            if (debugToggle) {
+                debugToggle.addEventListener('click', toggleDebugPanel);
+            }
+
+            const clearDebugBtn = document.getElementById('clearDebug');
+            if (clearDebugBtn) {
+                clearDebugBtn.addEventListener('click', clearDebug);
+            }
 
             // 页面加载完成后初始化
             document.addEventListener('DOMContentLoaded', () => {
