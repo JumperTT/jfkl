@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLRA 工具分发平台</title>
+    <title>CLRA 分发平台</title>
 
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -75,13 +76,20 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             animation: pulse 3s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         header h1 {
@@ -177,8 +185,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .tools-grid {
@@ -205,7 +218,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transition: left 0.5s;
         }
 
@@ -331,7 +344,7 @@
             left: 50%;
             width: 0;
             height: 0;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
@@ -467,6 +480,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-moon"></i>
@@ -480,7 +494,8 @@
     <div class="debug-info" id="debugInfo">
         <div class="debug-header">
             <strong>调试信息</strong>
-            <button id="clearDebug" style="margin-left: 10px; background: none; border: none; color: var(--accent-color); cursor: pointer;">
+            <button id="clearDebug"
+                style="margin-left: 10px; background: none; border: none; color: var(--accent-color); cursor: pointer;">
                 清除
             </button>
         </div>
@@ -520,7 +535,7 @@
         </div>
 
         <footer>
-            <p>&copy; 2024 CLRA 工具分发平台. 基于开源技术构建</p>
+            <p>&copy; 2026 CLRA（机房抗联）工具分发平台</p>
         </footer>
     </div>
 
@@ -531,7 +546,7 @@
          * 功能: 从配置文件读取域名，动态拉取并展示工具信息
          */
 
-        (function() {
+        (function () {
             'use strict';
 
             // 全局状态管理
@@ -545,7 +560,7 @@
 
             // 调试工具函数
             const debug = {
-                log: function(message, type = 'info') {
+                log: function (message, type = 'info') {
                     const timestamp = new Date().toLocaleTimeString();
                     const logEntry = {
                         timestamp,
@@ -557,15 +572,15 @@
 
                     // 控制台输出
                     const consoleMethod = type === 'error' ? console.error :
-                                        type === 'warn' ? console.warn :
-                                        console.log;
+                        type === 'warn' ? console.warn :
+                            console.log;
                     consoleMethod(`[CLRA] ${timestamp}: ${message}`);
 
                     // 更新调试面板
                     this.updatePanel();
                 },
 
-                updatePanel: function() {
+                updatePanel: function () {
                     if (!state.debugMode) return;
 
                     let html = '';
@@ -582,8 +597,8 @@
                     }
                 },
 
-                getColorForType: function(type) {
-                    switch(type) {
+                getColorForType: function (type) {
+                    switch (type) {
                         case 'error': return '#ef4444';
                         case 'warn': return '#f59e0b';
                         case 'success': return '#10b981';
@@ -591,13 +606,13 @@
                     }
                 },
 
-                escapeHtml: function(text) {
+                escapeHtml: function (text) {
                     const div = document.createElement('div');
                     div.textContent = text;
                     return div.innerHTML;
                 },
 
-                clear: function() {
+                clear: function () {
                     state.debugLogs = [];
                     const debugContent = document.getElementById('debugContent');
                     if (debugContent) {
@@ -985,4 +1000,5 @@
         })();
     </script>
 </body>
+
 </html>
